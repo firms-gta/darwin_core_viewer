@@ -1,4 +1,4 @@
-FROM rocker/r-ver:4.0.5
+FROM rocker/r-ver:4.2.1
 
 MAINTAINER Julien Barde "julien.barde@ird.fr"
 
@@ -7,12 +7,6 @@ RUN apt-get update && apt-get install -y \
     sudo \
     pandoc \
     pandoc-citeproc \
-    texlive-xetex \
-    texlive-latex-base \
-    texlive-latex-recommended \
-    texlive-fonts-recommended \
-    texlive-fonts-extra \
-    texlive-formats-extra \
     libssl-dev \
     libcurl4-openssl-dev \
     libxml2-dev \
@@ -39,3 +33,5 @@ RUN mkdir -p /etc/darwin_core_viewer/
 EXPOSE 3838
 
 CMD ["R", "-e shiny::runApp('/srv/darwin_core_viewer',port=3838,host='0.0.0.0')"]
+
+
