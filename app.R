@@ -10,7 +10,7 @@ library(geojsonio)
 library(DT)
 library(plotly)
 ############################################################ DATA and FILTER ########################################################################################################################################################################
-setwd("~/Desktop/CODES/darwin_core_viewer")
+setwd("./srv/darwin_core_viewer")
 if(!file.exists("./data/dwc.rds")){
   githubURL <- ("https://raw.githubusercontent.com/juldebar/MIKAROKA/master/data/dwc.rds")
   download.file(githubURL,"dwc.rds", method="curl")
