@@ -1,9 +1,4 @@
 renv::restore()
-# Source install script
-# source(here::here('install.R'))
-# Log the loading of libraries
-# flog.info("All libraries loaded successfully.")
-
 ############################################################ DATA and FILTER ########################################################################################################################################################################
 #setwd("./srv/darwin_core_viewer")
 if(!file.exists("./data/dwc.rds")){
