@@ -21,6 +21,7 @@ RUN apt-get update && apt-get install -y \
     libsecret-1-dev \
     libprotobuf-dev \
     protobuf-compiler \
+    libjq-dev \
     git
 
 ## update system libraries
