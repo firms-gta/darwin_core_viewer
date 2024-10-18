@@ -1,0 +1,36 @@
+{
+    "creators": [
+        {
+            "orcid": "0000-0002-3519-6141",
+            "affiliation": "IRD",
+            "name": "Barde, Julien"
+        },
+                {
+            "orcid": "0000-0002-9946-1338",
+            "affiliation": "IRD",
+            "name": "Grasset, Bastien"
+        }
+    ],
+
+    "license": "Apache-2.0",
+    "title": "Darwin Core viewer",
+    "upload_type": "software",
+    "access_right": "open",
+
+    "related_identifiers": [
+        {
+            "scheme": "doi",
+            "identifier": "https://doi.org/10.15468/mkrtxh",
+            "relation": "isSupplementTo",
+            "resource_type": "dataset"
+        }
+    ],
+
+    "keywords": ["web mapping", "Shiny app", "Darwin Core", "GBIF"],
+
+    "communities": [
+        {"identifier": "marbec"}
+    ],
+
+    "grants": [{"id":"101094227"}]
+}
