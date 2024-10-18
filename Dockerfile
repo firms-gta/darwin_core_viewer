@@ -25,13 +25,10 @@ RUN apt-get update && apt-get install -y \
 RUN apt update && apt upgrade -y && apt clean
 
 #geospatial
-RUN /rocker_scripts/install_geospatial.sh
+# RUN /rocker_scripts/install_geospatial.sh
 
-
-
-
-
-
+# Install R core package dependencies (we might specify the version of renv package)
+RUN R -e "install.packages('renv', repos='https://cran.r-project.org/')"
 
 # FROM ghcr.io/firms-gta/darwin_core_viewer-cache AS base
 # Set environment variables for renv cache, see doc https://docs.docker.com/build/cache/backends/
