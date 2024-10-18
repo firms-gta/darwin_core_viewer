@@ -17,8 +17,10 @@ RUN apt-get update && apt-get install -y \
     libcurl4-openssl-dev \
     libxml2-dev \
     libv8-dev \
-	libsodium-dev \
+    libsodium-dev \
     libsecret-1-dev \
+    libprotobuf-dev \
+    protobuf-compiler \
     git
 
 ## update system libraries
@@ -45,7 +47,6 @@ COPY renv.lock ./
 COPY .Rprofile ./
 COPY renv/activate.R renv/activate.R
 COPY renv/settings.json renv/settings.json
-#COPY renv renv
 
 # Set renv cache location: change default location of cache to project folder
 # see documentation for Multi-stage builds => https://cran.r-project.org/web/packages/renv/vignettes/docker.html
