@@ -12,10 +12,13 @@ RUN apt update && apt upgrade -y
 RUN apt-get update && apt-get install -y \
     sudo \
     pandoc \
-    pandoc-citeproc \
     libssl-dev \
     libcurl4-openssl-dev \
     libudunits2-dev \
+    libproj-dev \
+    libgeos-dev \
+    gdal-bin \
+    libgdal-dev \
     libxml2-dev \
     libv8-dev \
     libsodium-dev \
@@ -23,7 +26,15 @@ RUN apt-get update && apt-get install -y \
     libprotobuf-dev \
     protobuf-compiler \
     libjq-dev \
-    git
+    libnode-dev \
+    zlib1g-dev \
+    libsqlite3-dev \
+    libjq-dev \
+    git \
+    make
+    
+    
+       
 
 ## update system libraries
 RUN apt update && apt upgrade -y && apt clean
