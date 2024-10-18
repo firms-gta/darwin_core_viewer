@@ -1,4 +1,4 @@
-FROM rocker/r-ver:4.2.1
+FROM rocker/shiny:4.4.0
 
 LABEL org.opencontainers.image.authors="julien.barde@ird.fr" org.opencontainers.image.authors="bastien.grasset@ird.fr"
 LABEL maintainer="Julien Barde <julien.barde@ird.fr>"
