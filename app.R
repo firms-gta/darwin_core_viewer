@@ -1,14 +1,9 @@
-library(shiny)
-library(shinyWidgets)
-library(leaflet)
-library(leaflet.extras)
-library(leafpm)
-library(plyr)
-library(dplyr)
-library(sf)
-library(geojsonio)
-library(DT)
-library(plotly)
+renv::restore()
+# Source install script
+# source(here::here('install.R'))
+# Log the loading of libraries
+# flog.info("All libraries loaded successfully.")
+
 ############################################################ DATA and FILTER ########################################################################################################################################################################
 #setwd("./srv/darwin_core_viewer")
 if(!file.exists("./data/dwc.rds")){
@@ -41,7 +36,7 @@ target_family <- data_dwc %>% distinct(family)
 default_depth <- NULL
 target_depth <- data_dwc %>% distinct(depth)
 
-filters_combinations <- data_dwc %>% st_drop_geometry()  %>% distinct(family, scientificName)
+filters_combinations <- data_dwc %>% st_drop_geometry()  %>% distinct(family, scientificName) %>% arrange(family, scientificName)
 
 ################################################################ USER INTERFACE ###################################################################################################################################################
 
@@ -50,8 +45,8 @@ ui <- fluidPage(
   navbarPage(title="Data viewer for Darwin Core data format",
              tabPanel("Species occurences viewer",
                       div(class="outer",
-                          # tags$head(includeCSS("styles.css")),
-                          tags$head(includeCSS("https://raw.githubusercontent.com/juldebar/MIKAROKA/main/styles.css")),
+                          tags$head(includeCSS("styles.css")),
+                          # tags$head(includeCSS("https://raw.githubusercontent.com/juldebar/MIKAROKA/main/styles.css")),
                           leafletOutput("mymap", width="100%", height="100%"),
                           
                           # Shiny versions prior to 0.11 should use class = "modal" instead.
@@ -311,10 +306,9 @@ server <- function(input, output, session) {
     shiny::validate(
       need(nrow(data())>0, 'Sorry no data with current filters !'),
       errorClass = "myClass"
-      
     )
     
-    pie_data <- data()  %>% st_drop_geometry() %>% group_by(family) %>% summarise(count = n_distinct(gbifID)) %>% arrange(count) # %>% top_n(10)
+    pie_data <- data()  %>% st_drop_geometry() %>% dplyr::group_by(family) %>% dplyr::summarise(count = n_distinct(gbifID)) %>% dplyr::arrange(count) # %>% top_n(10)
     
     fig <- plot_ly(pie_data, labels = ~family, values = ~count, type = 'pie', width = 350, height = 500,
                    marker = list( line = list(color = '#FFFFFF', width = 1), sort = FALSE),
