@@ -3,7 +3,7 @@ FROM rocker/shiny:4.4.0
 LABEL org.opencontainers.image.authors="julien.barde@ird.fr" org.opencontainers.image.authors="bastien.grasset@ird.fr"
 LABEL maintainer="Julien Barde <julien.barde@ird.fr>"
 #connect this container (GHitHub package) to the repository
-LABEL org.opencontainers.image.source https://github.com/firms-gta/shiny_compare_tunaatlas_datasests
+LABEL org.opencontainers.image.source https://github.com/firms-gta/darwin_core_viewer
 
 # Update and upgrade the system with option -y to tells apt-get to assume the answer to all prompts is yes.
 RUN apt update && apt upgrade -y
