@@ -45,7 +45,7 @@ RUN apt update && apt upgrade -y && apt clean
 WORKDIR /root/darwin_core_viewer
 
 # ARG defines a constructor argument called RENV_PATHS_ROOT. Its value is passed from the YAML file. An initial value can be set up in case the YAML does not provide one
-# ARG RENV_PATHS_ROOT=/root/.cache/R/renv
+ARG RENV_PATHS_ROOT=/root/.cache/R/renv
 ENV RENV_PATHS_ROOT=${RENV_PATHS_ROOT}
 
 # Set environment variables for renv cache
