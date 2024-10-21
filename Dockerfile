@@ -1,7 +1,7 @@
 FROM rocker/shiny:4.4.0
 
 LABEL org.opencontainers.image.authors="julien.barde@ird.fr" org.opencontainers.image.authors="bastien.grasset@ird.fr"
-LABEL maintainer="Julien Barde <julien.barde@ird.fr>"
+#LABEL maintainer="Julien Barde <julien.barde@ird.fr>"
 #connect this container (GHitHub package) to the repository
 LABEL org.opencontainers.image.source https://github.com/firms-gta/darwin_core_viewer
 
@@ -89,4 +89,4 @@ RUN mkdir -p /etc/darwin_core_viewer/
 EXPOSE 3838
   
 # Define the entry point to run the Shiny app
-CMD ["R", "-e", "shiny::runApp('/root/darwin_core_viewer'"]
+CMD ["R", "-e", "shiny::runApp('/root/darwin_core_viewer')"]
