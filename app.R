@@ -239,7 +239,7 @@ server <- function(input, output, session) {
     # df <- data_dwc %>%  filter(st_within(geometry,st_as_sfc(local_wkt, crs = 4326),sparse = FALSE)[, 1]) 
     df <- data()  
     
-    mymap <-leaflet(data=df,options = leafletOptions(minZoom = 1, maxZoom = 40)) %>% 
+    mymap <-leaflet::leaflet(data=df,options = leafletOptions(minZoom = 1, maxZoom = 40)) %>% 
       clearPopups()  %>% 
       # https://leaflet-extras.github.io/leaflet-providers/preview/ 
       addProviderTiles("Esri.OceanBasemap", group = "ESRI") %>%
