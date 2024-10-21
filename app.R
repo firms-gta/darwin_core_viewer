@@ -1,5 +1,7 @@
 # Source install script
 require(here)
+require(futile.logger)
+require(futile.options)
 source(here::here('install.R'))
 # Log the loading of libraries
 flog.info("All libraries loaded successfully.")
