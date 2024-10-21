@@ -44,8 +44,8 @@ RUN apt update && apt upgrade -y && apt clean
 # Set the working directory
 WORKDIR /root/darwin_core_viewer
 
-# ARG defines a constructor argument called RENV_PATHS_ROOT. Its value is passed from the YAML file. An initial value is set up in case the YAML does not provide one
-ARG RENV_PATHS_ROOT=/root/.cache/R/renv
+# ARG defines a constructor argument called RENV_PATHS_ROOT. Its value is passed from the YAML file. An initial value can be set up in case the YAML does not provide one
+# ARG RENV_PATHS_ROOT=/root/.cache/R/renv
 ENV RENV_PATHS_ROOT=${RENV_PATHS_ROOT}
 
 # Set environment variables for renv cache
@@ -89,4 +89,4 @@ RUN mkdir -p /etc/darwin_core_viewer/
 EXPOSE 3838
   
 # Define the entry point to run the Shiny app
-CMD ["R", "-e", "shiny::runApp('/root/darwin_core_viewer')"]
+CMD ["R", "-e", "shiny::runApp('/root/darwin_core_viewer', port=3838, host='0.0.0.0')"]
