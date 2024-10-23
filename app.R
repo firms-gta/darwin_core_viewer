@@ -18,6 +18,8 @@ if(!file.exists("./data/dwc.rds")){
 
 # Set default values for filters to be displayed by UI and used by server to filter and process data
 # default_wkt <- 'POLYGON ((31.11328 -31.50363, 31.11328 -3.162456, 71.01562 -3.162456, 71.01562 -31.50363, 31.11328 -31.50363))'
+switch_taxa <- reactiveVal(TRUE) 
+
 default_wkt <- st_as_text(st_as_sfc(st_bbox(data_dwc)))
 default_geom <- st_as_sfc(st_bbox(data_dwc))
 
@@ -27,7 +29,7 @@ current_geom <- reactiveVal(default_geom)
 default_year <- NULL
 target_year <- data_dwc %>% distinct(year) %>% arrange(desc(year))
 
-default_species <- c('Elagatis bipinnulata (Quoy & Gaimard, 1825)','Coryphaena hippurus Linnaeus, 1758')
+default_species <- c('Elagatis bipinnulata (Quoy & Gaimard, 1825)','Coryphaena hippurus Linnaeus, 1758','Acanthocybium solandri (Cuvier, 1832)','Uraspis secunda (Poey, 1860)')
 # default_species <- NULL
 target_species <- data_dwc %>% distinct(scientificName)
 
@@ -45,18 +47,17 @@ ui <- fluidPage(
              tabPanel("Species occurences viewer",
                       modalDialog(
                         title = "About this Shiny app",
-                        h2("This Shiny app has been developped and is hosted in the same "),
-                        a("Virtual Lab", href="https://www.google.com/"),
-                        h2("provided by Blue-Cloud 2026 project which implements best practices of Open Science and FAIR data management."),
-                        tags$a(href='https://blue-cloud.d4science.org/group/globalfisheriesatlas', tags$img(src='logo_blue-cloud_2026.svg',height='10%')),
-                        h2("Please register as a new member if you want to learn more"),
-                        tags$br(),
-                        h2("About the code"),
-                        h2("The code is open and freely available on GitHub and can be directly executed in the RStudio of the virtual lab."),
-                        tags$a(href='https://github.com/firms-gta/darwin_core_viewer', tags$img(src='github-original-wordmark.svg',height='89',width='108')),
-                        tags$a(href='https://www.ird.fr/', tags$img(src='logo_IRD.svg',height='89',width='108')),
-                        h2("This app can display any data complying with Darwin Core format. The current dataset is published on GBIF with following DOI."),
-                        a(href='https://doi.org/10.15468/23m361', tags$img(src='gbif_23m361.svg')),
+                        markdown('
+                        [<img src="logo_blue-cloud_2026.svg" height="10%">](https://blue-cloud.d4science.org) 
+                        <!--- # About this Shiny app --->
+                        This is a generic Shiny app which can display any data complying with the Darwin Core format (e.g. GBIF data). This Shiny app has been developped and is hosted in the same **[Virtual Lab](https://blue-cloud.d4science.org/group/globalfisheriesatlas)** provided by 
+                        [Blue-Cloud 2026](https://blue-cloud.d4science.org) project which implements best practices for Open Science and FAIR data management:
+                        * data: the default dataset used by this app is published on GBIF with following DOI  [<img src="gbif_23m361.svg" height="5%">](https://doi.org/10.15468/23m361).
+                        * code: code is open and freely available on [<img src="github-original-wordmark.svg" height="89">](https://github.com/firms-gta/darwin_core_viewer) and main releases have been assigned DOIs on Zenodo .
+                        * virtual environment: the R code uses renv package to snapshot the required environment and can be directly executed within the RStudio server hosted by the virtual lab.
+                        * team: this work is provided by IRD [<img src="logo_IRD.svg" height="108">](https://www.ird.fr/).
+                        You can freely [register as a new member](https://blue-cloud.d4science.org/group/globalfisheriesatlas) of the virtual Lab if you want to learn more.
+                                 '),
                         tags$br(),
                         size = "l",
                         easyClose = FALSE,
@@ -68,7 +69,7 @@ ui <- fluidPage(
                           absolutePanel(id = "filters", class = "panel panel-default", fixed = TRUE,
                                         draggable = TRUE, top = "12%", left = "1.5%", right="auto", width = "auto", height = "auto",
                                         tags$br(),
-                                        h1("Select filters to customize indicators"),
+                                        h1("Select filters to customize the map and the plots"),
                                         tags$br(),
                                         # tags$br(),
                                         pickerInput(
@@ -134,6 +135,12 @@ ui <- fluidPage(
                                         top = "12%", right = "1.5%", width = "auto", #fixed=TRUE,
                                         draggable = TRUE, height = "auto",
                                         h2("Taxa composition"),
+                                        actionButton(
+                                          inputId = "switched",
+                                          label = "Switch (family or species)",
+                                          # icon("move"), 
+                                          style="color: #fff; background-color: #008a20; border-color: #2e6da4; font-size: xx-large;font-weight: bold;"
+                                        ),
                                         # tags$br(),
                                         tags$br(),
                                         plotlyOutput("pie_map", height ="100%"),
@@ -153,35 +160,29 @@ ui <- fluidPage(
              navbarMenu("More",
                          tabPanel("About",
                                  fluidRow(
-                                   column(3,
-                                          img(src='logo_blue-cloud_2026.svg'),
-                                          tags$small(
-                                            "General Disclaimer:",
-                                            "Funding : This work has received funding from the European Union’s Horizon Europe research and innovation programme under grant agreement No. 101094227 (Blue-Cloud 2026 project) and No. 862409 (Blue-Cloud H2020 project)."
-                                          )
+                                   column(2),
+                                   column(6,
+                                          markdown('[<img src="logo_blue-cloud_2026.svg" height="10%">](https://blue-cloud.d4science.org)
+# Funding
+This work has received funding from the European Union’s Horizon Europe research and innovation programme under grant agreement No.  [101094227](https://doi.org/10.3030/101094227) and No. [862409](https://doi.org/10.3030/862409) (Blue-Cloud H2020 project).
+
+
+# General Disclaimer
+
+This repository contains work in progress. It can be used to explore the content of biodiversity / ecological data using Darwin Core data format Results presented here do not represent the official view of IRD, its staff or consultants. Caution must be taken when interpreting all data presented, and differences between information products published by IRD and other sources using different inclusion criteria and different data cut-off times are to be expected. While steps are taken to ensure accuracy and reliability, all data are subject to continuous verification and change. See here for further background and other important considerations surrounding the source data.
+
+
+[<img src="logo_IRD.svg" height="108">](https://www.ird.fr/)    
+    ')
                                    ),
-                                   column(3,
-                                          tags$small(
-                                            "Source: GBIF data",
-                                            a(href='https://doi.org/10.15468/23m361', tags$img(src='gbif_23m361.svg')))
-                                            # https://doi.org/10.15468/23m361 https://doi.org/10.15468/dl.5bzzz4
-                                   ),
-                                   column(3,
-                                          img(class="logo_IRD",
-                                              src='logo_IRD.svg',height='89',width='108'),
-                                          tags$small(
-                                            "General Disclaimer:",
-                                            "This repository contains work in progress. It can be used to explore the content of biodiversity / ecological data using Darwin Core data format Results presented here do not represent the official view of IRD, its staff or consultants.",
-                                            "Caution must be taken when interpreting all data presented, and differences between information products published by IRD and other sources using different inclusion criteria and different data cut-off times are to be expected. While steps are taken to ensure accuracy and reliability, all data are subject to continuous verification and change.  See here for further background and other important considerations surrounding the source data."
-                                          )
-                                   )
+                                   column(2)
                                    
                                  )
-                        ),
-                        tabPanel(
-                          title = "Current WKT polygon",
-                          textOutput("WKT")
                         )
+                        # tabPanel(
+                        #   title = "Current WKT polygon",
+                        #   textOutput("WKT")
+                        # )
              )
   )
 )
@@ -222,6 +223,10 @@ server <- function(input, output, session) {
   },
   ignoreInit = TRUE)
   
+  observeEvent(input$switched, {
+    if(switch_taxa()){switch_taxa(FALSE)}else{switch_taxa(TRUE)}
+  })
+  
   data <- eventReactive(input$submit, {
     if(is.null(input$species)){filter_species=target_species$scientificName}else{filter_species=input$species}
     if(is.null(input$family)){filter_family=target_family$family}else{filter_family=input$family}
@@ -241,10 +246,10 @@ server <- function(input, output, session) {
       data() %>%  dplyr::filter(st_within(.,st_as_sfc(input$polygon, crs = 4326), sparse = FALSE))  %>% st_drop_geometry()
     }) 
     
-    output$WKT <- renderText({
-      wkt()
-    }) 
-    
+    # output$WKT <- renderText({
+    #   wkt()
+    # }) 
+    # 
     
   output$mymap <- renderLeaflet({
     
@@ -253,10 +258,14 @@ server <- function(input, output, session) {
       errorClass = "myClass"
     )
     
+    
     # df <- data_dwc %>%  filter(st_within(geometry,st_as_sfc(default_wkt, crs = 4326),sparse = FALSE)[, 1]) 
     df <- data()
     # current_selection <- st_sf(st_as_sfc(wkt(), crs = 4326))
     ongoing_geom <- current_geom()
+    # all_points <- df %>% st_buffer(2000) %>% st_combine() #%>% st_convex_hull(
+    convex_hull <- df %>% st_combine() %>% st_convex_hull()
+    all_points <- df %>% st_combine() %>% st_buffer(1)
     
     mymap <-leaflet::leaflet(data=df,options = leafletOptions(minZoom = 1, maxZoom = 40)) %>% 
       # clearPopups()  %>% 
@@ -265,6 +274,8 @@ server <- function(input, output, session) {
       addProviderTiles("Esri.OceanBasemap", group = "bathymetry") %>%
       addProviderTiles("Esri.WorldImagery", group = "satellite") %>% 
       addPolygons(data = ongoing_geom,color="red",fillColor = "transparent", group="current_selection") %>%
+      addPolygons(data = convex_hull, color="blue",fillColor = "transparent", group="all_points") %>%
+      addPolygons(data = all_points, color="blue",fillColor = "transparent", group="all_points") %>%
       clearBounds() %>%
       addMarkers(~as_tibble(st_coordinates(geometry))$X,~as_tibble(st_coordinates(geometry))$Y,
                  popup = ~as.character(scientificName),
@@ -284,7 +295,7 @@ server <- function(input, output, session) {
       addLayersControl(
         position = "topleft",
         baseGroups = c("bathymetry","satellite"),
-        overlayGroups = c("draw","current_selection"),
+        overlayGroups = c("draw","current_selection","all_points"),
         options = layersControlOptions(collapsed = TRUE)
       ) %>%  
       addMiniMap(zoomLevelFixed = 1) %>%
@@ -348,13 +359,24 @@ server <- function(input, output, session) {
       errorClass = "myClass"
     )
     
-    pie_data <- data()  %>% st_drop_geometry() %>% dplyr::group_by(family) %>% dplyr::summarise(count = n_distinct(gbifID)) %>% dplyr::arrange(count) # %>% top_n(10)
+    if(switch_taxa()){
+      taxa <- "species"
+      pie_data <- data()  %>% st_drop_geometry() %>% dplyr::group_by(scientificName) %>% dplyr::summarise(count = n_distinct(gbifID)) %>% dplyr::arrange(count) # %>% top_n(10)
+      fig <- plot_ly(pie_data, labels = ~scientificName, values = ~count, type = 'pie', width = 650, height = 1000,
+                     marker = list( line = list(color = '#FFFFFF', width = 1), sort = FALSE),
+                     showlegend = TRUE)
+    }else{
+      taxa <- "family"
+      pie_data <- data()  %>% st_drop_geometry() %>% dplyr::group_by(family) %>% dplyr::summarise(count = n_distinct(gbifID)) %>% dplyr::arrange(count) # %>% top_n(10)
+      fig <- plot_ly(pie_data, labels = ~family, values = ~count, type = 'pie', width = 650, height = 1200,
+                     marker = list( line = list(color = '#FFFFFF', width = 1), sort = FALSE),
+                     showlegend = TRUE)
+    }
     
-    fig <- plot_ly(pie_data, labels = ~family, values = ~count, type = 'pie', width = 700, height = 1000,
-                   marker = list( line = list(color = '#FFFFFF', width = 1), sort = FALSE),
-                   showlegend = TRUE)
+    
 
-    fig <- fig %>% layout(title = 'Main families composition',
+
+    fig <- fig %>% layout(title = paste0('Main ',taxa,' composition'),
                           xaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE),
                           yaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE))
     fig <- fig %>% layout(legend = list(orientation = 'h'))
