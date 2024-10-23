@@ -1,12 +1,9 @@
-# Source install script
-require(here)
-require(futile.logger)
-require(futile.options)
+# script loading required packages
 source(here::here('install.R'))
 # Log the loading of libraries
 flog.info("All libraries loaded successfully.")
+
 ############################################################ DATA and FILTER ########################################################################################################################################################################
-#setwd("./srv/darwin_core_viewer")
 if(!file.exists("./data/dwc.rds")){
   githubURL <- ("https://raw.githubusercontent.com/juldebar/MIKAROKA/master/data/dwc.rds")
   download.file(githubURL,"dwc.rds", method="curl")
@@ -20,110 +17,131 @@ if(!file.exists("./data/dwc.rds")){
 }
 
 # Set default values for filters to be displayed by UI and used by server to filter and process data
-local_wkt <- 'POLYGON ((31.11328 -31.50363, 31.11328 -3.162456, 71.01562 -3.162456, 71.01562 -31.50363, 31.11328 -31.50363))'
-wkt <- reactiveVal(local_wkt) 
+# default_wkt <- 'POLYGON ((31.11328 -31.50363, 31.11328 -3.162456, 71.01562 -3.162456, 71.01562 -31.50363, 31.11328 -31.50363))'
+default_wkt <- st_as_text(st_as_sfc(st_bbox(data_dwc)))
+default_geom <- st_as_sfc(st_bbox(data_dwc))
+
+wkt <- reactiveVal(default_wkt) 
+current_geom <- reactiveVal(default_geom)
 
 default_year <- NULL
 target_year <- data_dwc %>% distinct(year) %>% arrange(desc(year))
 
-# default_species <- c('Elagatis bipinnulata (Quoy & Gaimard, 1825)','Coryphaena hippurus Linnaeus, 1758')
-default_species <- NULL
+default_species <- c('Elagatis bipinnulata (Quoy & Gaimard, 1825)','Coryphaena hippurus Linnaeus, 1758')
+# default_species <- NULL
 target_species <- data_dwc %>% distinct(scientificName)
 
 # default_family <- c("Coryphaenidae","Carangidae","Scombridae", "Carcharhinidae","Istiophoridae")
 default_family <- NULL
 target_family <- data_dwc %>% distinct(family)
 
-default_depth <- NULL
-target_depth <- data_dwc %>% distinct(depth)
-
 filters_combinations <- data_dwc %>% st_drop_geometry()  %>% distinct(family, scientificName) %>% arrange(family, scientificName)
 
 ################################################################ USER INTERFACE ###################################################################################################################################################
 
 ui <- fluidPage(
-  # titlePanel("Species occurences viewer: map and plots"),
-  navbarPage(title="Data viewer for Darwin Core data format",
+  # titlePanel(" viewer: map and plots"),
+  navbarPage(title="Data viewer for species occurences complying with Darwin Core data format",
              tabPanel("Species occurences viewer",
+                      modalDialog(
+                        title = "About this Shiny app",
+                        h2("This Shiny app has been developped and is hosted in the same "),
+                        a("Virtual Lab", href="https://www.google.com/"),
+                        h2("provided by Blue-Cloud 2026 project which implements best practices of Open Science and FAIR data management."),
+                        tags$a(href='https://blue-cloud.d4science.org/group/globalfisheriesatlas', tags$img(src='logo_blue-cloud_2026.svg',height='10%')),
+                        h2("Please register as a new member if you want to learn more"),
+                        tags$br(),
+                        h2("About the code"),
+                        h2("The code is open and freely available on GitHub and can be directly executed in the RStudio of the virtual lab."),
+                        tags$a(href='https://github.com/firms-gta/darwin_core_viewer', tags$img(src='github-original-wordmark.svg',height='89',width='108')),
+                        tags$a(href='https://www.ird.fr/', tags$img(src='logo_IRD.svg',height='89',width='108')),
+                        h2("This app can display any data complying with Darwin Core format. The current dataset is published on GBIF with following DOI."),
+                        a(href='https://doi.org/10.15468/23m361', tags$img(src='gbif_23m361.svg')),
+                        tags$br(),
+                        size = "l",
+                        easyClose = FALSE,
+                        footer=modalButton("OK", icon = NULL)
+                      ),
                       div(class="outer",
                           tags$head(includeCSS("styles.css")),
-                          # tags$head(includeCSS("https://raw.githubusercontent.com/juldebar/MIKAROKA/main/styles.css")),
                           leafletOutput("mymap", width="100%", height="100%"),
-                          
-                          # Shiny versions prior to 0.11 should use class = "modal" instead.
-                          absolutePanel(id = "controls", class = "panel panel-default", fixed = TRUE,
-                                        draggable = TRUE, top = "15%", left = "auto", right="75%", width = "20%", height = "auto",
+                          absolutePanel(id = "filters", class = "panel panel-default", fixed = TRUE,
+                                        draggable = TRUE, top = "12%", left = "1.5%", right="auto", width = "auto", height = "auto",
                                         tags$br(),
-                                        h2("Select filters to customize indicators"),
+                                        h1("Select filters to customize indicators"),
                                         tags$br(),
-                                        actionButton(
-                                          inputId = "submit",
-                                          label = "Display data",
-                                          # icon = icon("refresh"),
-                                          icon("play-circle"), 
-                                          style="color: #fff; background-color: #F51D08; border-color: #2e6da4"
-                                        ),
-                                        tags$br(),
-                                        tags$br(),
-                                        selectInput(
+                                        # tags$br(),
+                                        pickerInput(
                                           inputId = "year",
                                           label = "Year",
                                           choices = target_year$year,
                                           multiple = TRUE,
-                                          selected= default_year
+                                          selected= default_year,
+                                          options = list(`actions-box` = TRUE),
+                                          width = "98%"
                                         ),
-                                        selectInput(
+                                        pickerInput(
                                           inputId = "family",
                                           label = "Family",
                                           choices = target_family$family,
                                           multiple = TRUE,
-                                          selected= default_family
+                                          selected= default_family,
+                                          options = list(`actions-box` = TRUE),
+                                          width = "98%"
                                         ),
-                                        selectInput(
+                                        pickerInput(
                                           inputId = "species",
                                           label = "Scientific Name",
                                           choices = target_species$scientificName,
                                           multiple = TRUE,
-                                          selected= default_species
+                                          selected= default_species,
+                                          options = list(`actions-box` = TRUE),
+                                          width = "98%"
                                         ),
                                         textInput(
                                           inputId="polygon",
                                           label="Edit WKT",
-                                          value=local_wkt
+                                          value=default_wkt,
+                                          width="98%"
                                           ),
                                         actionButton(
                                           inputId = "resetWkt",
                                           label = "Reset WKT",
                                           icon("sync"), 
-                                          style="color: #fff; background-color: #63B061; border-color: #2e6da4"
+                                          style="color: #fff; background-color: #63B061; border-color: #2e6da4;font-size: xx-large;font-weight: bold;"
                                           ),
                                         actionButton(
                                           inputId = "resetAllFilters",
                                           label = "Reset all filters",
                                           icon("sync"), 
-                                          style="color: #fff; background-color: #63C5DA; border-color: #2e6da4"
+                                          style="color: #fff; background-color: #63C5DA; border-color: #2e6da4;font-size: xx-large;font-weight: bold;"
                                           ),
-                                        # selectInput(
-                                        #   inputId = "depth",
-                                        #   label = "Depth",
-                                        #   choices = target_depth$depth,
-                                        #   multiple = TRUE,
-                                        #   selected= default_depth
-                                        # ),
+                                        tags$br(),
+                                        tags$br(),
+                                        tags$br(),
+                                        actionButton(
+                                          inputId = "submit",
+                                          label = "Apply current filters and display data",
+                                          # icon = icon("refresh"),
+                                          icon("play-circle"), 
+                                          style="color: #fff; background-color: #F51D08; border-color: #2e6da4;font-size: xx-large;font-weight: bold;"
+                                        ),
                                         tags$br(),
                                         tags$br()
                           ),
                           
-                          absolutePanel(id = "controls", class = "panel panel-default",
-                                        top = "15%", right = "auto", left ="73%", width = "25%", fixed=TRUE,
+                          absolutePanel(id = "plots", class = "panel panel-default",
+                                        top = "12%", right = "1.5%", width = "auto", #fixed=TRUE,
                                         draggable = TRUE, height = "auto",
-                                        tags$br(),
+                                        h2("Taxa composition"),
+                                        # tags$br(),
                                         tags$br(),
                                         plotlyOutput("pie_map", height ="100%"),
                                         ),
-                          absolutePanel(id = "logo", class = "card", bottom = "4%", left = "2%", width = "5%", fixed=TRUE, draggable = FALSE, height = "auto",
-                                        tags$a(href='https://mikaroka.ird.fr/', tags$img(src='http://mikaroka.ird.fr/wp-content/uploads/2020/01/MIKAROKA_logo.png',width = '200')))
-                                      # tags$a(href='https://www.ird.fr/', tags$img(src='https://raw.githubusercontent.com/juldebar/IRDTunaAtlas/master/logo_IRD.svg',height='89',width='108')))
+                          absolutePanel(id = "logo", class = "logo", bottom = "2%", left = "2%", width = "auto", fixed=FALSE, draggable = TRUE, height = "auto",
+                                        tags$a(href='https://www.ird.fr/', tags$img(src='logo_IRD.svg',height='5%'))),
+                          absolutePanel(id = "logo", class = "logo", top = "1.5%", right = "2%", width = "auto", fixed=FALSE, draggable = TRUE, height = "auto",
+                                        tags$a(href='https://blue-cloud.d4science.org/', tags$img(src='logo_blue-cloud_2026.svg',height='5%')))
                           
                       )
              ),
@@ -136,21 +154,21 @@ ui <- fluidPage(
                          tabPanel("About",
                                  fluidRow(
                                    column(3,
+                                          img(src='logo_blue-cloud_2026.svg'),
                                           tags$small(
-                                            "Funding : MIKAROKA ",
-                                            a(href='http://mikaroka.ird.fr/', img(src='http://mikaroka.ird.fr/wp-content/uploads/2020/01/MIKAROKA_logo.png',width='30%'))
+                                            "General Disclaimer:",
+                                            "Funding : This work has received funding from the European Union’s Horizon Europe research and innovation programme under grant agreement No. 101094227 (Blue-Cloud 2026 project) and No. 862409 (Blue-Cloud H2020 project)."
                                           )
                                    ),
                                    column(3,
                                           tags$small(
                                             "Source: GBIF data",
-                                            img(class="logo_IRD", src=paste0("https://raw.githubusercontent.com/juldebar/MIKAROKA/main/data/gbif_23m361.svg")),
+                                            a(href='https://doi.org/10.15468/23m361', tags$img(src='gbif_23m361.svg')))
                                             # https://doi.org/10.15468/23m361 https://doi.org/10.15468/dl.5bzzz4
-                                          )
                                    ),
                                    column(3,
                                           img(class="logo_IRD",
-                                              src=paste0("https://raw.githubusercontent.com/juldebar/IRDTunaAtlas/master/logo_IRD.svg")),
+                                              src='logo_IRD.svg',height='89',width='108'),
                                           tags$small(
                                             "General Disclaimer:",
                                             "This repository contains work in progress. It can be used to explore the content of biodiversity / ecological data using Darwin Core data format Results presented here do not represent the official view of IRD, its staff or consultants.",
@@ -186,19 +204,21 @@ server <- function(input, output, session) {
   
   
   observeEvent(input$resetWkt, {
-    wkt(local_wkt)
+    wkt(default_wkt)
+    current_geom(default_geom)
+    updateTextInput(session,"polygon", value = wkt())
   },
-  ignoreInit = TRUE)
+  ignoreInit = FALSE)
   
-  observe({
-    updateTextInput(session, "polygon", value = wkt())
-  })
+
   
   observeEvent(input$resetAllFilters, {
-    updateTextInput(session, "polygon", value = wkt())
-    updateSelectInput(session,"year",choices = target_year$year, selected = NULL )
-    updateSelectInput(session,"family",choices = target_family$family, selected = NULL )
-    updateSelectInput(session,"species",choices = target_species$scientificName, selected = NULL )
+    wkt(default_wkt)
+    current_geom(default_geom)
+    updateTextInput(session, "polygon", value = default_wkt)
+    updatePickerInput(session,"year",choices = target_year$year, selected = NULL )
+    updatePickerInput(session,"family",choices = target_family$family, selected = NULL )
+    updatePickerInput(session,"species",choices = target_species$scientificName, selected = NULL)
   },
   ignoreInit = TRUE)
   
@@ -206,12 +226,10 @@ server <- function(input, output, session) {
     if(is.null(input$species)){filter_species=target_species$scientificName}else{filter_species=input$species}
     if(is.null(input$family)){filter_family=target_family$family}else{filter_family=input$family}
     if(is.null(input$year)){filter_year=target_year$year}else{filter_year=input$year}
-    # if(is.null(input$depth)){filter_depth=target_depth$depth}else{filter_depth=input$depth}
     data_dwc %>% 
       filter(year %in% filter_year) %>%
       filter(family %in% filter_family) %>% 
       filter(scientificName %in% filter_species) %>%
-      # filter(depth %in% filter_depth) %>% 
       dplyr::filter(st_within(.,st_as_sfc(input$polygon, crs = 4326), sparse = FALSE)) # %>% head(500)
 
         },ignoreNULL = FALSE)
@@ -233,17 +251,20 @@ server <- function(input, output, session) {
     shiny::validate(
       need(nrow(data())>0, 'Sorry no data with current filters !'),
       errorClass = "myClass"
-      
     )
     
-    # df <- data_dwc %>%  filter(st_within(geometry,st_as_sfc(local_wkt, crs = 4326),sparse = FALSE)[, 1]) 
-    df <- data()  
+    # df <- data_dwc %>%  filter(st_within(geometry,st_as_sfc(default_wkt, crs = 4326),sparse = FALSE)[, 1]) 
+    df <- data()
+    # current_selection <- st_sf(st_as_sfc(wkt(), crs = 4326))
+    ongoing_geom <- current_geom()
     
     mymap <-leaflet::leaflet(data=df,options = leafletOptions(minZoom = 1, maxZoom = 40)) %>% 
-      clearPopups()  %>% 
+      # clearPopups()  %>% 
+      # clearShapes()   %>% 
       # https://leaflet-extras.github.io/leaflet-providers/preview/ 
-      addProviderTiles("Esri.OceanBasemap", group = "ESRI") %>%
-      addProviderTiles("Esri.WorldImagery", group = "ESRI2") %>% 
+      addProviderTiles("Esri.OceanBasemap", group = "bathymetry") %>%
+      addProviderTiles("Esri.WorldImagery", group = "satellite") %>% 
+      addPolygons(data = ongoing_geom,color="red",fillColor = "transparent", group="current_selection") %>%
       clearBounds() %>%
       addMarkers(~as_tibble(st_coordinates(geometry))$X,~as_tibble(st_coordinates(geometry))$Y,
                  popup = ~as.character(scientificName),
@@ -261,18 +282,29 @@ server <- function(input, output, session) {
         )
       ) %>%
       addLayersControl(
-        baseGroups = c("ESRI", "ESRI2"),
-        overlayGroups = c("draw"),
-        options = layersControlOptions(collapsed = FALSE),
-        position = "bottomright"
+        position = "topleft",
+        baseGroups = c("bathymetry","satellite"),
+        overlayGroups = c("draw","current_selection"),
+        options = layersControlOptions(collapsed = TRUE)
+      ) %>%  
+      addMiniMap(zoomLevelFixed = 1) %>%
+      addScaleBar(
+        position = "topright",
+        options = scaleBarOptions(
+          maxWidth = 10,
+          metric = TRUE,
+          imperial = FALSE
+        )
       )
       # mymap
   })
-  
-  observe({
-    #use the draw_stop event to detect when users finished drawing
-    feature <- input$mymap_draw_new_feature
+
+  observeEvent(input$mymap_draw_stop,{
+    # observe({
+      #use the draw_stop event to detect when users finished drawing
+    # req(input$mymap_draw_new_feature)
     req(input$mymap_draw_stop)
+    feature <- input$mymap_draw_new_feature
     print(feature)
     polygon_coordinates <- input$mymap_draw_new_feature$geometry$coordinates[[1]]
     # see  https://rstudio.github.io/leaflet/shiny.html
@@ -282,8 +314,11 @@ server <- function(input, output, session) {
     geoJson <- geojsonio::as.json(feature)
     # spdf <- geojsonio::geojson_sp(feature)
     geom <- st_read(geoJson)
-    wkt(st_as_text(st_geometry(geom[1,])))
     coord <- st_as_text(st_geometry(geom[1,]))
+    wkt(coord)
+    updateTextInput(session,"polygon", value = coord)
+    new_geom <- st_sf(st_as_sfc(coord, crs = 4326))
+    current_geom(new_geom)
     
     north <- polygon_coordinates[[1]][[1]]
     south <- polygon_coordinates[[2]][[1]]
@@ -295,11 +330,15 @@ server <- function(input, output, session) {
       return()
     text<-paste("North ", north, "South ", east)
     
-    # mymap_proxy = leafletProxy("mymap") %>% clearPopups() %>% addPopups(south,west,coord)
-    # textOutput("wkt")
+    # mymap_proxy = leafletProxy("mymap") %>% clearPopups() %>% addPopups(south,west,coord) %>%
+    # fitBounds(south, east, north, west) %>%
+    # # addRectangles(lng1=east,lat1=south,lng2=west,lat2=north,fillColor = "grey",fillOpacity = 0.1, stroke = TRUE, color = "red", opacity = 1, group = "draw")
+    # addPolygons(data = current_selection,color="red",fillColor = "transparent", group="current_selection")
+    # # textOutput("wkt")
     
-  })
- 
+    },ignoreInit = FALSE)
+# })
+
   
   
   output$pie_map <- renderPlotly({
@@ -311,7 +350,7 @@ server <- function(input, output, session) {
     
     pie_data <- data()  %>% st_drop_geometry() %>% dplyr::group_by(family) %>% dplyr::summarise(count = n_distinct(gbifID)) %>% dplyr::arrange(count) # %>% top_n(10)
     
-    fig <- plot_ly(pie_data, labels = ~family, values = ~count, type = 'pie', width = 350, height = 500,
+    fig <- plot_ly(pie_data, labels = ~family, values = ~count, type = 'pie', width = 700, height = 1000,
                    marker = list( line = list(color = '#FFFFFF', width = 1), sort = FALSE),
                    showlegend = TRUE)
 

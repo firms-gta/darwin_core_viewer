@@ -3,6 +3,9 @@ input[type="number"] {
 }
 
 div.outer {
+  color: black;
+  font-weight: bold;
+  font-size: x-large;
   position: fixed;
   top: 56px;
   left: 0;
@@ -14,23 +17,48 @@ div.outer {
 
 /* Customize fonts */
 body, label, input, button, select { 
+  color: black;
+  font-size: xx-large;
+  font-weight: bold;
   font-family: 'Helvetica Neue', Helvetica;
-  font-weight: 200;
 }
+
 h1, h2, h3, h4 { font-weight: 400; }
 
-#controls {
+#filters {
   /* Appearance */
-  background-color: grey;
+  border: 10px solid #3A506B;
+  border-radius: 10px;
   padding: 0 10px 10px 10px;
   cursor: move;
   /* Fade out while not hovering */
   opacity: 0.85;
   zoom: 0.9;
   transition: opacity 500ms 1s;
+  background-color:#9ec2e6;
 }
 
-#controls:hover {
+#filters:hover {
+  /* Fade in while hovering */
+  opacity: 0.75;
+  transition-delay: 0;
+}
+
+
+#plots {
+  /* Appearance */
+  border: 5px solid #3A506B;
+  border-radius: 30px;
+  background-color: #dcdcde;
+  padding: 0 10px 10px 10px;
+  cursor: move;
+  /* Fade out while not hovering */
+  opacity: 0.85;
+  zoom: 0.9;
+  transition: opacity 500ms 1s;
+
+}
+#plots:hover {
   /* Fade in while hovering */
   opacity: 0.75;
   transition-delay: 0;
@@ -39,9 +67,9 @@ h1, h2, h3, h4 { font-weight: 400; }
 #logo {
   /* Appearance */
   background-color: transparent;
-  cursor: move;
+  /*cursor: move;*/
   /* Fade out while not hovering */
-  opacity: 0.25;
+  opacity: 0.7;
   zoom: 0.9;
   transition: opacity 500ms 1s;
 }
