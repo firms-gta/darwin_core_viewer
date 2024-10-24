@@ -48,6 +48,7 @@ ui <- fluidPage(
                       modalDialog(
                         title = "Information",
                         includeMarkdown("doc/popup.md"),
+                        size = "l",
                         easyClose = TRUE,
                         footer=modalButton("OK", icon =icon("check"))
                       ),
