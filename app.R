@@ -46,22 +46,42 @@ ui <- fluidPage(
   navbarPage(title="Data viewer for species occurences complying with Darwin Core data format",
              tabPanel("Species occurences viewer",
                       modalDialog(
-                        title = "About this Shiny app",
+                        title = "Information",
                         markdown('
-                        [<img src="logo_blue-cloud_2026.svg" height="10%">](https://blue-cloud.d4science.org) 
+                        # About this Shiny app
+                        
                         <!--- # About this Shiny app --->
-                        This is a generic Shiny app which can display any data complying with the Darwin Core format (e.g. GBIF data). This Shiny app has been developped and is hosted in the same **[Virtual Lab](https://blue-cloud.d4science.org/group/globalfisheriesatlas)** provided by 
+                        
+                        [<img src="logo_blue-cloud_2026.svg" height="8%">](https://blue-cloud.d4science.org)
+                        
+                        <div id="modal" name="modal" style="border:solid">
+                        <br>
+
+                        This is a generic Shiny app which can display any data complying with the [Darwin Core format](https://dwc.tdwg.org/) (e.g. GBIF data). This Shiny app has been developped and is hosted in the same [Virtual Lab](https://blue-cloud.d4science.org/group/globalfisheriesatlas) provided by 
                         [Blue-Cloud 2026](https://blue-cloud.d4science.org) project which implements best practices for Open Science and FAIR data management:
-                        * data: the default dataset used by this app is published on GBIF with following DOI  [<img src="gbif_23m361.svg" height="5%">](https://doi.org/10.15468/23m361).
-                        * code: code is open and freely available on [<img src="github-original-wordmark.svg" height="89">](https://github.com/firms-gta/darwin_core_viewer) and main releases have been assigned DOIs on Zenodo .
-                        * virtual environment: the R code uses renv package to snapshot the required environment and can be directly executed within the RStudio server hosted by the virtual lab.
-                        * team: this work is provided by IRD [<img src="logo_IRD.svg" height="108">](https://www.ird.fr/).
-                        You can freely [register as a new member](https://blue-cloud.d4science.org/group/globalfisheriesatlas) of the virtual Lab if you want to learn more.
+                        * **data**: the default dataset used by this app is published on [GBIF](https://www.gbif.org/) with following [DOI](https://doi.org/10.15468/23m361).
+                        * **code**: code is open and freely available on a [GitHub repository](https://github.com/firms-gta/darwin_core_viewer) and main releases have been assigned DOIs on Zenodo. The code can be directly executed within the RStudio server hosted by the virtual lab. 
+                        * **virtual environment**: the R code combines the use of both renv package and Docker container to snapshot the environment required to execute the app. 
+                        * **team**: this work is provided by [IRD](https://www.ird.fr/).
+                        You can freely [register as a new member](https://blue-cloud.d4science.org/group/globalfisheriesatlas) of the virtual Lab if you want to learn more. 
+                        <br>
+                        </div> 
+                        <br>
+
+                         # Useful links
+                         
+                         <br>
+
+                         
+                         | Code | &nbsp; &nbsp; &nbsp; | Data | &nbsp; &nbsp; &nbsp; | Contact |
+                         | --- | --- |--- | --- | --- |
+                         | [<img src="github-original-wordmark.svg" height="100px">](https://github.com/firms-gta/darwin_core_viewer) | &nbsp;  &nbsp; &nbsp; | [<img src="logo_gbif.svg" height="100px">](https://doi.org/10.15468/23m361) | &nbsp;  &nbsp; &nbsp; | [<img src="logo_ORCID.svg" height="100px">](https://orcid.org/0000-0002-3519-6141) |
+
                                  '),
                         tags$br(),
                         size = "l",
-                        easyClose = FALSE,
-                        footer=modalButton("OK", icon = NULL)
+                        easyClose = TRUE,
+                        footer=modalButton("OK", icon =icon("check"))
                       ),
                       div(class="outer",
                           tags$head(includeCSS("styles.css")),
@@ -137,7 +157,7 @@ ui <- fluidPage(
                                         h2("Taxa composition"),
                                         actionButton(
                                           inputId = "switched",
-                                          label = "Switch (family or species)",
+                                          label = "Switch taxa level (family or species)",
                                           # icon("move"), 
                                           style="color: #fff; background-color: #008a20; border-color: #2e6da4; font-size: xx-large;font-weight: bold;"
                                         ),
@@ -157,28 +177,53 @@ ui <- fluidPage(
                       DT::dataTableOutput("DT_within_WKT")
                       # downloadButton("downloadCsv", "Download as CSV"),tags$br(),tags$br(),
              ),
-             navbarMenu("More",
+             navbarMenu("About",
                          tabPanel("About",
                                  fluidRow(
-                                   column(2),
-                                   column(6,
-                                          markdown('[<img src="logo_blue-cloud_2026.svg" height="10%">](https://blue-cloud.d4science.org)
-# Funding
-This work has received funding from the European Union’s Horizon Europe research and innovation programme under grant agreement No.  [101094227](https://doi.org/10.3030/101094227) and No. [862409](https://doi.org/10.3030/862409) (Blue-Cloud H2020 project).
-
-
-# General Disclaimer
-
-This repository contains work in progress. It can be used to explore the content of biodiversity / ecological data using Darwin Core data format Results presented here do not represent the official view of IRD, its staff or consultants. Caution must be taken when interpreting all data presented, and differences between information products published by IRD and other sources using different inclusion criteria and different data cut-off times are to be expected. While steps are taken to ensure accuracy and reliability, all data are subject to continuous verification and change. See here for further background and other important considerations surrounding the source data.
-
-
-[<img src="logo_IRD.svg" height="108">](https://www.ird.fr/)    
-    ')
+                                   column(2,
+                                          markdown('
+                                          [<img src="logo_VLab5.png" height="10%">](https://blue-cloud.d4science.org/group/globalfisheriesatlas)
+                                                   ')
                                    ),
-                                   column(2)
-                                   
+                                   column(6,
+                                          markdown('
+                                          <div id="modal" name="modal" style="border:solid">
+                                          
+                                          [<img src="logo_blue-cloud_2026.svg" height="10%">](https://blue-cloud.d4science.org)
+                                          
+                                          # Funding
+                                          This work has received funding from the European Union’s Horizon Europe research and innovation programme under grant agreement No.  [101094227](https://doi.org/10.3030/101094227) and No. [862409](https://doi.org/10.3030/862409) (Blue-Cloud H2020 project).
+                                          
+                                          # General Disclaimer
+                                          
+                                          This repository contains work in progress. It can be used to explore the content of biodiversity / ecological data using Darwin Core data format Results presented here do not represent the official view of IRD, its staff or consultants. Caution must be taken when interpreting all data presented, and differences between information products published by IRD and other sources using different inclusion criteria and different data cut-off times are to be expected. While steps are taken to ensure accuracy and reliability, all data are subject to continuous verification and change. See here for further background and other important considerations surrounding the source data.
+                                          
+                                          # Code
+                                          
+                                          The code of this Shiny app is open and freely available on a [GitHub repository](https://github.com/firms-gta/darwin_core_viewer) and main releases have been assigned DOIs on Zenodo. The code can be directly executed within the RStudio server hosted by the virtual lab. 
+                                          
+                                          # Data
+                                          
+                                          The default dataset used by this app is published on GBIF with following DOI  [<img src="gbif_23m361.svg" height="5%">](https://doi.org/10.15468/23m361).
+                                          
+                                          # Contact
+                                          
+                                          This collaborative work has been achieved by IRD (Shiny app code) with the support of CNR in the context of the Blue-Cloud 2026 EU reserch project.
+                                          If needed please contact Julien Barde [<img src="logo_ORCID.svg" height="10%">](https://orcid.org/0000-0002-3519-6141).
+                                          
+                                          [<img src="logo_IRD.svg" height="108">](https://www.ird.fr/)   
+                                          
+                                          </div>
+                                                   
+                                                   ')
+                                          ),
+                                   column(2,
+                                          markdown('
+                                          [<img src="BET_YFT_SKJ_ALB.svg" height="10%">](https://blue-cloud.d4science.org/group/globalfisheriesatlas)
+                                                   ')
+                                   )
+                                   )
                                  )
-                        )
                         # tabPanel(
                         #   title = "Current WKT polygon",
                         #   textOutput("WKT")
