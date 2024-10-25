@@ -1,32 +1,125 @@
 {
-    "creators": [
-        {
-            "orcid": "0000-0002-3519-6141",
-            "affiliation": "IRD",
-            "name": "Barde, Julien"
-        },
-                {
-            "orcid": "0000-0002-9946-1338",
-            "affiliation": "IRD",
-            "name": "Grasset, Bastien"
-        }
-    ],
-    "license": "cc-by",
-    "title": "Darwin Core viewer: a generic shiny app to display (map and plot) biodiversity data",
-    "upload_type": "software",
-    "access_right": "open",
-    "description": "This is a generic Shiny app which can display any data complying with the Darwin Core format.",
-    "related_identifiers": [
-        {
-            "scheme": "doi",
-            "identifier": "https://doi.org/10.15468/mkrtxh",
-            "relation": "isSupplementTo",
-            "resource_type": "dataset"
-        }
-    ],
-    "keywords": ["web mapping", "Shiny app", "Darwin Core", "GBIF","Open Science","R"],
-    "communities": [
-        [{"identifier":"umr-marbec"},{"identifier":"bluecloud"}]
-    ],
-    "grants": [{"id":"101094227"},{"id":"862409"}]
+  "title": "Source code of protocols of the Research Institute for Nature and Forest (INBO)",
+  "description": "This archive provides the source code of protocols used at the Research Institute for Nature and Forest (INBO), Brussels, Belgium (<a href=\"https://www.inbo.be/en\">www.inbo.be<\/a>). The protocols are written in R markdown and are compiled as html and pdf using the bookdown package. The website with the compiled protocols (including older versions) is at <a href=\"https://protocols.inbo.be\">https://protocols.inbo.be<\/a>.",
+  "license": "cc-by",
+  "upload_type": "other",
+  "access_right": "open",
+  "creators": [
+    {
+      "name": "Van Calster, Hans",
+      "affiliation": "Research Institute for Nature and Forest",
+      "orcid": "0000-0001-8595-8426"
+    },
+    {
+      "name": "Lommelen, Els",
+      "affiliation": "Research Institute for Nature and Forest",
+      "orcid": "0000-0002-3481-5684"
+    },
+    {
+      "name": "Onkelinx, Thierry",
+      "affiliation": "Research Institute for Nature and Forest",
+      "orcid": "0000-0001-8804-4216"
+    },
+    {
+      "name": "Vanderhaeghe, Floris",
+      "affiliation": "Research Institute for Nature and Forest",
+      "orcid": "0000-0002-6378-6229"
+    }
+  ],
+  "keywords": [
+    "open protocol",
+    "open science",
+    "research institute",
+    "nature",
+    "forest",
+    "environment",
+    "markdown",
+    "Flanders",
+    "Belgium"
+  ],
+  "communities": [
+    {
+      "identifier": "inbo"
+    }
+  ],
+  "contributors": [
+    {
+      "name": "Toon Westra",
+      "affiliation": "Research Institute for Nature and Forest",
+      "type": "Researcher",
+      "orcid": "0000-0003-2478-9459"
+    },
+    {
+      "name": "Leyssen, An",
+      "affiliation": "Research Institute for Nature and Forest",
+      "type": "Researcher",
+      "orcid": "0000-0003-3537-286X"
+    },
+    {
+      "name": "Sophie Vermeersch",
+      "affiliation": "Research Institute for Nature and Forest",
+      "type": "Researcher",
+      "orcid": "0009-0001-5836-1189"
+    },
+    {
+      "name": "Els De Bie",
+      "affiliation": "Research Institute for Nature and Forest",
+      "type": "Researcher",
+      "orcid": "0000-0001-7679-743X"
+    },
+    {
+      "name": "Scheers, Kevin",
+      "affiliation": "Research Institute for Nature and Forest",
+      "type": "Researcher",
+      "orcid": "0000-0002-4756-4247"
+    },
+    {
+      "name": "Mathias Wackenier",
+      "affiliation": "Research Institute for Nature and Forest",
+      "type": "Researcher",
+      "orcid": "0000-0001-6934-9241"
+    },
+    {
+      "name": "Piet De Becker",
+      "affiliation": "Research Institute for Nature and Forest",
+      "type": "Researcher",
+      "orcid": "0000-0002-9686-0472"
+    },
+    {
+      "name": "Toon Van Daele",
+      "affiliation": "Research Institute for Nature and Forest",
+      "type": "Researcher",
+      "orcid": "0000-0002-1362-853X"
+    },
+    {
+      "name": "Oosterlynck, Patrik",
+      "affiliation": "Research Institute for Nature and Forest",
+      "type": "Researcher",
+      "orcid": "0000-0002-5712-0770"
+    },
+    {
+      "name": "Nathalie Cools",
+      "affiliation": "Research Institute for Nature and Forest",
+      "type": "Researcher",
+      "orcid": "0000-0002-7059-2318"
+    },
+    {
+      "name": "Bruno De Vos",
+      "affiliation": "Research Institute for Nature and Forest",
+      "type": "Researcher",
+      "orcid": "0000-0001-9523-3453"
+    },
+    {
+      "name": "Hans Van Calster",
+      "affiliation": "Research Institute for Nature and Forest",
+      "type": "Researcher",
+      "orcid": "0000-0001-8595-8426"
+    },
+    {
+      "name": "Langeraert, Ward",
+      "affiliation": "Research Institute for Nature and Forest",
+      "type": "Researcher",
+      "orcid": "0000-0002-5900-8109"
+    }
+  ]
 }
