@@ -1,7 +1,6 @@
 # About this Shiny app
 
 <!--- # About this Shiny app --->
-
 [<img src="logo_blue-cloud_2026.svg" height="8%">](https://blue-cloud.d4science.org)
 
 <div id="modal" name="modal" style="border:solid">
@@ -12,7 +11,7 @@ This is a generic Shiny app which can display any data complying with the [Darwi
 * **data**: the default dataset used by this app is published on [GBIF](https://www.gbif.org/) with following [DOI](https://doi.org/10.15468/23m361).
 * **code**: code is open and freely available on a [GitHub repository](https://github.com/firms-gta/darwin_core_viewer) and main releases have been assigned DOIs on Zenodo. The code can be directly executed within the RStudio server hosted by the virtual lab. 
 * **virtual environment**: the R code combines the use of both renv package and Docker container to snapshot the environment required to execute the app. 
-* **team**: this work is provided by [IRD](https://www.ird.fr/).
+* **team**: this work is provided by [IRD](https://www.ird.fr/) with the support of CNR to deploy the app on D4science infrastructure.
 You can freely [register as a new member](https://blue-cloud.d4science.org/group/globalfisheriesatlas) of the virtual Lab if you want to learn more. 
 <br>
 </div> 

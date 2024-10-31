@@ -2,7 +2,28 @@ input[type="number"] {
   max-width: 80%;
 }
 
-div.outer {
+.navbar-default .navbar-brand {
+  font-weight: bold;
+  color: #3A506B; 
+  font-size: 100%; 
+  background-color: #c3ccdb ;}
+  
+.navbar .navbar-nav {
+  float: center; 
+  color: #277facc8; 
+  font-size: 90%; 
+  background-color: #c3dbd9 ;
+}
+ .navbar.navbar-default.navbar-static-top{
+   color: #ff3368; 
+   font-size: 80%; 
+   background-color: #c3dbd9;
+ }
+.navbar .navbar-header {
+  float: center;
+} 
+
+div.map {
   color: black;
   font-weight: bold;
   font-size: x-large;
@@ -14,7 +35,6 @@ div.outer {
   overflow: hidden;
   padding: 0;
 }
-
 
 div.modal {
   color: black;
@@ -30,7 +50,7 @@ div.modal {
 
 
 /* Customize fonts */
-body, label, input, button, select { 
+title,body, label, input, button, select { 
   color: black;
   font-size: xx-large;
   font-weight: bold;
@@ -42,6 +62,8 @@ h1, h2, h3, h4 { font-weight: 400; }
 #filters {
   /* Appearance */
   border: 10px solid #3A506B;
+  font-size: xx-large;
+  font-weight: bold;
   border-radius: 10px;
   padding: 0 10px 10px 10px;
   cursor: move;

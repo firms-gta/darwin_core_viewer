@@ -1,7 +1,7 @@
 # script loading required packages
 source(here::here('install.R'))
 # Log the loading of libraries
-flog.info("All libraries loaded successfully.")
+futile.logger::flog.info("All libraries loaded successfully.")
 
 ############################################################ DATA and FILTER ########################################################################################################################################################################
 if(!file.exists("./data/dwc.rds")){
@@ -20,7 +20,7 @@ if(!file.exists("./data/dwc.rds")){
 # default_wkt <- 'POLYGON ((31.11328 -31.50363, 31.11328 -3.162456, 71.01562 -3.162456, 71.01562 -31.50363, 31.11328 -31.50363))'
 switch_taxa <- reactiveVal(TRUE) 
 
-default_wkt <- st_as_text(st_as_sfc(st_bbox(data_dwc)))
+default_wkt <- sf::st_as_text(st_as_sfc(st_bbox(data_dwc)))
 default_geom <- st_as_sfc(st_bbox(data_dwc))
 
 wkt <- reactiveVal(default_wkt) 
@@ -43,25 +43,34 @@ filters_combinations <- data_dwc %>% st_drop_geometry()  %>% distinct(family, sc
 
 ui <- fluidPage(
   # titlePanel(" viewer: map and plots"),
-  navbarPage(title="Data viewer for species occurences complying with Darwin Core data format",
+  tags$head(includeCSS("styles.css")),
+  tags$style(HTML("
+  ")),
+  navbarPage(id = "navbarPageId",
+             windowTitle="Data viewer for species occurences complying with Darwin Core data format",
+             title = "Darwin Core Viewer",
+             # title = div(img(src="logo_sardara.svg"), "Darwin Core Viewer"),
              tabPanel("Species occurences viewer",
                       modalDialog(
                         title = "Information",
+                        # includeHTML("doc/ribbon_GH.html"),
                         includeMarkdown("doc/popup.md"),
                         size = "l",
                         easyClose = TRUE,
                         footer=modalButton("OK", icon =icon("check"))
                       ),
-                      div(class="outer",
-                          tags$head(includeCSS("styles.css")),
+                      div(class="map",
                           leafletOutput("mymap", width="100%", height="100%"),
-                          absolutePanel(id = "filters", class = "panel panel-default", fixed = TRUE,
-                                        draggable = TRUE, top = "12%", left = "1.5%", right="auto", width = "auto", height = "auto",
+                          absolutePanel(id = "filters",
+                                        class = "panel panel-default",
+                                        fixed = TRUE,
+                                        draggable = TRUE,
+                                        top = "12%", left = "1.5%", right="auto", width = "auto", height = "auto",
                                         tags$br(),
                                         h1("Select filters to customize the map and the plots"),
                                         tags$br(),
                                         # tags$br(),
-                                        pickerInput(
+                                        shinyWidgets::pickerInput(
                                           inputId = "year",
                                           label = "Year",
                                           choices = target_year$year,
@@ -164,12 +173,9 @@ ui <- fluidPage(
                                    )
                                    )
                                  )
-                        # tabPanel(
-                        #   title = "Current WKT polygon",
-                        #   textOutput("WKT")
-                        # )
              )
   )
+# )
 )
 
 ################################################################ SERVER ###################################################################################################################################################
