@@ -6,9 +6,16 @@ on:
       - 'main'
     tags:
       - "v*"
-  pull_request:
-    branches:
-      - 'main'
+  workflow_dispatch:
+    inputs:
+      base_branch:
+        description: "Branch to base the Docker image on (e.g., main, dev)"
+        required: true
+        default: "main"
+      action:
+        description: "Action to perform: build,build-and-push, build-no-cache-and-push"
+        required: true
+        default: "build" 
       
 env:
   CACHE_IMAGE: ghcr.io/firms-gta/darwin_core_viewer-cache
@@ -62,14 +69,6 @@ jobs:
         uses: docker/setup-buildx-action@v2
         with:
           driver-opts: image=moby/buildkit:master,network=host
-
-      - name: Cache Docker layers
-        uses: actions/cache@v3
-        with:
-          path: /tmp/.buildx-cache
-          key: ${{ runner.os }}-buildx-${{ github.sha }}
-          restore-keys: |
-            ${{ runner.os }}-buildx-
 
       - name: Verify Docker images
         run: docker images
