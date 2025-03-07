@@ -1,4 +1,4 @@
-FROM rocker/shiny:4.4.0
+FROM rocker/r-ver:4.2.3
 
 LABEL org.opencontainers.image.authors="julien.barde@ird.fr" org.opencontainers.image.authors="bastien.grasset@ird.fr"
 #LABEL maintainer="Julien Barde <julien.barde@ird.fr>"
@@ -39,10 +39,14 @@ RUN apt update && apt upgrade -y && apt clean
 #geospatial
 # RUN /rocker_scripts/install_geospatial.sh
 
-
-
 # Set the working directory
 WORKDIR /root/darwin_core_viewer
+
+# Create data repository to copy data
+RUN mkdir -p data 
+#COPY data/DOI.csv ./data/DOI.csv
+# Add files downloaded from Zenodo DOIs => https://docs.docker.com/reference/dockerfile/#add
+ADD https://raw.githubusercontent.com/juldebar/MIKAROKA/master/data/dwc.rds ./data/dwc.rds
 
 # ARG defines a constructor argument called RENV_PATHS_ROOT. Its value is passed from the YAML file. An initial value can be set up in case the YAML does not provide one
 ARG RENV_PATHS_ROOT=/root/.cache/R/renv

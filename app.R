@@ -61,11 +61,9 @@ ui <- fluidPage(
                       ),
                       div(class="map",
                           leafletOutput("mymap", width="100%", height="100%"),
-                          absolutePanel(id = "filters",
-                                        class = "panel panel-default",
-                                        fixed = TRUE,
-                                        draggable = TRUE,
-                                        top = "12%", left = "1.5%", right="auto", width = "auto", height = "auto",
+                          absolutePanel(id = "filters", class = "panel panel-default", fixed = TRUE,
+                                        draggable = TRUE,top = "12%",  left = "3%", width = "21%", height = "auto",
+                                        # top = "12%", left = "1.5%", right="auto", width = "auto", height = "auto",
                                         tags$br(),
                                         h1("Select filters to customize the map and the plots"),
                                         tags$br(),
@@ -129,9 +127,10 @@ ui <- fluidPage(
                                         tags$br()
                           ),
                           
-                          absolutePanel(id = "plots", class = "panel panel-default",
-                                        top = "12%", right = "1.5%", width = "auto", #fixed=TRUE,
-                                        draggable = TRUE, height = "auto",
+                          absolutePanel(id = "plots", class = "panel panel-default", fixed = TRUE,
+                                        draggable = TRUE, top = "12%", left = "auto", right="1%", width = "auto", height = "auto",
+                                        # top = "12%", right = "1.5%", width = "auto", #fixed=TRUE,
+                                        tags$br(),
                                         h2("Taxa composition"),
                                         actionButton(
                                           inputId = "switched",
@@ -141,7 +140,7 @@ ui <- fluidPage(
                                         ),
                                         # tags$br(),
                                         tags$br(),
-                                        plotlyOutput("pie_map", height ="100%"),
+                                        plotlyOutput("pie_map", height ="auto", width ="90%"),
                                         ),
                           absolutePanel(id = "logo", class = "logo", bottom = "2%", left = "2%", width = "auto", fixed=FALSE, draggable = TRUE, height = "auto",
                                         tags$a(href='https://www.ird.fr/', tags$img(src='logo_IRD.svg',height='5%'))),
@@ -381,8 +380,3 @@ server <- function(input, output, session) {
 
 # Run the application 
 shinyApp(ui = ui, server = server)
-
-
-
-
-
