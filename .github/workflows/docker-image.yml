@@ -22,9 +22,19 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
-
+        
+      - name: Calculate renv.lock hash
+        id: renv_lock
+        run: |
+          if [ -f renv.lock ]; then
+            echo "renv_lock_hash=$(sha256sum renv.lock | cut -d' ' -f1)" >> $GITHUB_ENV
+          else
+            echo "renv_lock_hash=default" >> $GITHUB_ENV
+          fi
+          
       - name: Docker meta
         id: meta
+        if: ${{ contains(github.event.inputs.action, 'push') }}
         uses: docker/metadata-action@v4
         with:
           images: ghcr.io/firms-gta/darwin_core_viewer
@@ -61,26 +71,59 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-buildx-
 
+      - name: Verify Docker images
+        run: docker images
+
+      - name: Inspect Docker cache
+        run: docker buildx du
+        
       - name: Build Docker image
+        if: ${{ !contains(github.event.head_commit.message, 'No building docker image') }}
         run: |
-          docker buildx build \
-            --cache-from type=registry,ref=$CACHE_IMAGE:latest \
-            --cache-to type=registry,ref=$CACHE_IMAGE:latest,mode=max \
-            --tag ghcr.io/firms-gta/darwin_core_viewer:latest \
-            --build-arg RENV_PATHS_ROOT=${{ env.RENV_PATHS_ROOT }} \
-            --output type=docker,dest=/tmp/docker-image.tar \
-            .
+          BRANCH_NAME=$(echo ${{ github.ref_name }} | tr '/' '_' | tr ':' '_')
+          echo "Branch name => $BRANCH_NAME"
+    
+          if [[ "${{ github.event.inputs.action }}" == "build-no-cache-and-push" || "${{ github.event.inputs.action }}" == "build-no-cache" ]]; then
+            echo "Building without cache..."
+            docker buildx build \
+              --no-cache \
+              --progress=plain \
+              --build-arg RENV_PATHS_ROOT=${{ env.RENV_PATHS_ROOT }} \
+              --build-arg RENV_LOCK_HASH=${{ env.renv_lock_hash }} \
+              --tag ghcr.io/firms-gta/darwin_core_viewer:${BRANCH_NAME} \
+              --output type=docker,dest=/tmp/docker-image.tar \
+              .
+          else
+            echo "Building with cache..."
+            docker buildx build \
+              --progress=plain \
+              --cache-from type=registry,ref=$CACHE_IMAGE:${BRANCH_NAME} \
+              --cache-to type=registry,ref=$CACHE_IMAGE:${BRANCH_NAME},mode=max \
+              --build-arg RENV_PATHS_ROOT=${{ env.RENV_PATHS_ROOT }} \
+              --build-arg RENV_LOCK_HASH=${{ env.renv_lock_hash }} \
+              --tag ghcr.io/firms-gta/darwin_core_viewer:${BRANCH_NAME} \
+              --output type=docker,dest=/tmp/docker-image.tar \
+              .
+          fi
 
       - name: Load Docker image
-        if: github.ref_type == 'tag'
+        if: ${{ github.event_name == 'workflow_dispatch' && contains(github.event.inputs.action, 'push') || github.event_name == 'push' && github.ref_type == 'tag' }}
         run: |
           docker load -i /tmp/docker-image.tar
 
       - name: Conditional push Docker image
-        if: github.ref_type == 'tag'
+        if: ${{ github.event_name == 'workflow_dispatch' && contains(github.event.inputs.action, 'push') || github.event_name == 'push' && github.ref_type == 'tag' }}
         run: |
           TAG_NAME=$(basename ${GITHUB_REF})
-          docker tag ghcr.io/firms-gta/darwin_core_viewer:latest ghcr.io/firms-gta/darwin_core_viewer:${TAG_NAME}
-          docker push ghcr.io/firms-gta/darwin_core_viewer:latest
-          docker push ghcr.io/firms-gta/darwin_core_viewer:${TAG_NAME}
+          BRANCH_NAME=$(echo ${{ github.ref_name }} | sed 's/[^a-zA-Z0-9_.-]/_/g') # Sanitize branch name
+          echo "Branch name => $BRANCH_NAME"
+
+          # Check if the branch is main
+          if [ "$BRANCH_NAME" = "main" ]; then
+            docker tag ghcr.io/firms-gta/darwin_core_viewer:${BRANCH_NAME} ghcr.io/firms-gta/darwin_core_viewer:latest
+            docker push ghcr.io/firms-gta/darwin_core_viewer:latest
+          else
+            docker tag ghcr.io/firms-gta/darwin_core_viewer:${BRANCH_NAME} ghcr.io/firms-gta/darwin_core_viewer:latest
+            docker push ghcr.io/firms-gta/darwin_core_viewer:latest
+          fi
 

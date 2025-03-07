@@ -42,7 +42,8 @@ filters_combinations <- data_dwc %>% st_drop_geometry()  %>% distinct(family, sc
 ################################################################ USER INTERFACE ###################################################################################################################################################
 
 ui <- fluidPage(
-  # titlePanel(" viewer: map and plots"),
+  theme = bs_theme(version = 5, bootswatch = "cerulean"),
+  # titlePanel("Darwin Core viewer: map and plots"),
   tags$head(includeCSS("styles.css")),
   tags$style(HTML("
   ")),
