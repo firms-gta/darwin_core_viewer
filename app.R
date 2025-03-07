@@ -1,6 +1,16 @@
 # script loading required packages
-source(here::here('install.R'))
+# source(here::here('install.R'))
+# renv::restore()
+library(shiny)
 library(bslib)
+library(sf)
+library(dplyr)
+library(markdown)
+library(leaflet.extras)
+library(shinyWidgets)
+library(plotly)
+library(DT)
+
 # Log the loading of libraries
 futile.logger::flog.info("All libraries loaded successfully.")
 
@@ -62,6 +72,9 @@ ui <- fluidPage(
                         footer=modalButton("OK", icon =icon("check"))
                       ),
                       div(class="map",
+                          # tags$style(type = "text/css", "html, body {width:100%;height:100%}"),
+                          # shiny::tags$a(type ="", '<a href="https://github.com/you"><img decoding="async" width="149" height="149" src="https://github.blog/wp-content/uploads/2008/12/forkme_right_red_aa0000.png" class="attachment-full size-full" alt="Fork me on GitHub" loading="lazy"></a>'),
+                          # shiny::tags$a(href="https://github.com/you", '<a ><img decoding="async" width="149" height="149" src="https://github.blog/wp-content/uploads/2008/12/forkme_right_red_aa0000.png" class="attachment-full size-full" alt="Fork me on GitHub" loading="lazy"></a>'),
                           leafletOutput("mymap", width="100%", height="100%"),
                           absolutePanel(id = "filters", class = "panel panel-default", fixed = TRUE,
                                         draggable = TRUE,top = "12%",  left = "3%", width = "21%", height = "auto",

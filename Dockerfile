@@ -14,6 +14,7 @@ RUN apt-get update && apt-get install -y \
     pandoc \
     libssl-dev \
     libcurl4-openssl-dev \
+    libprotoc-dev \
     libudunits2-dev \
     libproj-dev \
     libgeos-dev \

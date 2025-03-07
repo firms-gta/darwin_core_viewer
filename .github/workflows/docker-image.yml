@@ -25,6 +25,7 @@ env:
 jobs:
   docker:
     runs-on: ubuntu-latest
+    timeout-minutes: 140
 
     steps:
       - name: Checkout code
