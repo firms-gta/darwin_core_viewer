@@ -1,5 +1,6 @@
 # script loading required packages
 source(here::here('install.R'))
+library(bslib)
 # Log the loading of libraries
 futile.logger::flog.info("All libraries loaded successfully.")
 
