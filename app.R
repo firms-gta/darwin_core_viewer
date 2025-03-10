@@ -53,7 +53,7 @@ filters_combinations <- data_dwc %>% st_drop_geometry()  %>% distinct(family, sc
 ################################################################ USER INTERFACE ###################################################################################################################################################
 
 ui <- fluidPage(
-  theme = bs_theme(version = 5, bootswatch = "cerulean"),
+  # theme = bs_theme(version = 5, bootswatch = "cerulean"),
   # titlePanel("Darwin Core viewer: map and plots"),
   tags$head(includeCSS("styles.css")),
   tags$style(HTML("
@@ -143,19 +143,17 @@ ui <- fluidPage(
                           ),
                           
                           absolutePanel(id = "plots", class = "panel panel-default", fixed = TRUE,
-                                        draggable = TRUE, top = "12%", left = "auto", right="1%", width = "auto", height = "auto",
+                                        draggable = TRUE, top = "12%", left = "auto", right="1%", width = "25%", height = "30%",
                                         # top = "12%", right = "1.5%", width = "auto", #fixed=TRUE,
-                                        tags$br(),
                                         h2("Taxa composition"),
+                                        # tags$br(),
+                                        plotlyOutput("pie_map", height = '70%'),
                                         actionButton(
                                           inputId = "switched",
                                           label = "Switch taxa level (family or species)",
                                           # icon("move"), 
                                           style="color: #fff; background-color: #008a20; border-color: #2e6da4; font-size: xx-large;font-weight: bold;"
-                                        ),
-                                        # tags$br(),
-                                        tags$br(),
-                                        plotlyOutput("pie_map", height ="auto", width ="90%"),
+                                        )
                                         ),
                           absolutePanel(id = "logo", class = "logo", bottom = "2%", left = "2%", width = "auto", fixed=FALSE, draggable = TRUE, height = "auto",
                                         tags$a(href='https://www.ird.fr/', tags$img(src='logo_IRD.svg',height='5%'))),
@@ -367,13 +365,13 @@ server <- function(input, output, session) {
     if(switch_taxa()){
       taxa <- "species"
       pie_data <- data()  %>% st_drop_geometry() %>% dplyr::group_by(scientificName) %>% dplyr::summarise(count = n_distinct(gbifID)) %>% dplyr::arrange(count) # %>% top_n(10)
-      fig <- plot_ly(pie_data, labels = ~scientificName, values = ~count, type = 'pie', width = 650, height = 1000,
+      fig <- plot_ly(pie_data, labels = ~scientificName, values = ~count, type = 'pie',# width = "500px", height = "1000px",
                      marker = list( line = list(color = '#FFFFFF', width = 1), sort = FALSE),
                      showlegend = TRUE)
     }else{
       taxa <- "family"
       pie_data <- data()  %>% st_drop_geometry() %>% dplyr::group_by(family) %>% dplyr::summarise(count = n_distinct(gbifID)) %>% dplyr::arrange(count) # %>% top_n(10)
-      fig <- plot_ly(pie_data, labels = ~family, values = ~count, type = 'pie', width = 650, height = 1200,
+      fig <- plot_ly(pie_data, labels = ~family, values = ~count, type = 'pie', #width = "500px", height = "1000px",
                      marker = list( line = list(color = '#FFFFFF', width = 1), sort = FALSE),
                      showlegend = TRUE)
     }
@@ -384,7 +382,7 @@ server <- function(input, output, session) {
     fig <- fig %>% layout(title = paste0('Main ',taxa,' composition'),
                           xaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE),
                           yaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE))
-    fig <- fig %>% layout(legend = list(orientation = 'h'))
+    fig <- fig %>% layout(legend = list(orientation = 'h')) 
     fig
 
 

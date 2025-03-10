@@ -28,7 +28,7 @@ div.map {
   font-weight: bold;
   font-size: x-large;
   position: fixed;
-  top: 56px;
+  top: 1%;
   left: 0;
   right: 0;
   bottom: 0;
@@ -49,7 +49,7 @@ div.modal {
 }
 
 
-/* Customize fonts */
+/* Customize fonts 
 title,body, label, input, button, select { 
   color: black;
   font-size: xx-large;
@@ -58,6 +58,8 @@ title,body, label, input, button, select {
 }
 
 h1, h2, h3, h4 { font-weight: 400; }
+
+*/
 
 #filters {
   /* Appearance */
